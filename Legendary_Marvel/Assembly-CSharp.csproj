@@ -48,7 +48,6 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\CardManager.cs" />
      <Compile Include="Assets\Scripts\Cards\Card.cs" />
-     <Compile Include="Assets\Scripts\FatherObject.cs" />
      <Compile Include="Assets\Scripts\MainGame.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
  <Reference Include="UnityEngine.UI">
