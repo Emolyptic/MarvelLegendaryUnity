@@ -5,7 +5,8 @@ public class Card{
     
     Texture2D texture;
 
-	public Card(){
+	public Card(Texture2D texture){
+		this.texture = texture;
 	}
 
 }
