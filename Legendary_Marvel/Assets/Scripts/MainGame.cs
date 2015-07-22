@@ -6,20 +6,24 @@ public class MainGame : MonoBehaviour {
 	int phase;
 
 	#region phase 0 miniphase bools
-	bool chooseplayer		= false;
-	bool chooseheroes		= false;
-	bool choosehenchmen		= false;
-	bool choosevillain		= false;
-	bool choosemastermind	= false;
-	bool choosescheme 		= false;
+	bool choosePlayer		= false;
+	bool chooseHeroes		= false;
+	bool chooseHenchmen		= false;
+	bool chooseVillain		= false;
+	bool chooseMastermind	= false;
+	bool chooseScheme 		= false;
 	bool selected  			= false;
 	#endregion
 
 	#region Saved Data
 	int numberOfPlayer;
-	List<string> selectedHeroes = new List<string>(){"","","","",""};
+	List<string> heroDeck = new List<string>(){"","","","",""};
 	List<string> selectedHenchmen;
 	List<string> selectedVillians;
+	List<string> shieldDeck;
+	List<string> woundDeck;
+	List<string> bystanderDeck;
+
 	string selectedMastermind;
 	string selectedScheme;
 	#endregion
@@ -136,7 +140,8 @@ public class MainGame : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		phase = 0;
-		chooseplayer = true;
+		CreateCards();
+		choosePlayer = true;
 	}
 	
 	// Update is called once per frame
@@ -161,7 +166,7 @@ public class MainGame : MonoBehaviour {
 			#region Phase 0 Setup
 
 			#region Choose Player Amount
-			if(chooseplayer)
+			if(choosePlayer)
 			{
 				for(int i = 0; i < 5; i++)
 				{	
@@ -175,8 +180,8 @@ public class MainGame : MonoBehaviour {
 				{
 					if(GUI.Button(new Rect(screenWidth*.9f,screenHeight*.9f,screenWidth * .1f,screenHeight * .1f),"Next"))
 					{
-						chooseheroes = true;
-						chooseplayer = false;
+						chooseHeroes = true;
+						choosePlayer = false;
 						selected = false;
 						switch(numberOfPlayer)
 						{
@@ -232,7 +237,7 @@ public class MainGame : MonoBehaviour {
 			#endregion
 			#region ChooseHero
 			//CHOOSE HERO PHASE
-			if(chooseheroes)
+			if(chooseHeroes)
 			{
 				for(int j = 0; j < heroes.Count/2; j++)
 				{
@@ -252,9 +257,9 @@ public class MainGame : MonoBehaviour {
 					w++;
 				}
 				//Shows Icons
-				for(int y = 0; y < selectedHeroes.Count; y++)
+				for(int y = 0; y < heroDeck.Count; y++)
 				{
-					if(GUI.Button(new Rect(cardIconXPos,cardIconYPos + (cardIconHeight*1.2f * y) ,cardIconWidth, cardIconHeight), selectedHeroes[y]))
+					if(GUI.Button(new Rect(cardIconXPos,cardIconYPos + (cardIconHeight*1.2f * y) ,cardIconWidth, cardIconHeight), heroDeck[y]))
 					{
 
 					}
@@ -264,8 +269,8 @@ public class MainGame : MonoBehaviour {
 				{
 					if(GUI.Button(new Rect(screenWidth*.9f,screenHeight*.9f,screenWidth * .1f,screenHeight * .1f),"Next"))
 					{
-						choosehenchmen = true;
-						chooseheroes = false;
+						chooseHenchmen = true;
+						chooseHeroes = false;
 						selected = false;
 					}
 				}
@@ -273,7 +278,7 @@ public class MainGame : MonoBehaviour {
 			#endregion
 			#region ChooseHenchmen
 			//CHOOSE HENCHMEN PHASE
-			if(choosehenchmen)
+			if(chooseHenchmen)
 			{
 
 				for(int j = 0; j < henchmen.Count/2; j++)
@@ -305,8 +310,8 @@ public class MainGame : MonoBehaviour {
 				{
 					if(GUI.Button(new Rect(screenWidth*.9f,screenHeight*.9f,screenWidth * .1f,screenHeight * .1f),"Next"))
 					{
-						choosevillain = true;
-						choosehenchmen = false;
+						chooseVillain = true;
+						chooseHenchmen = false;
 						selected = false;
 					}
 				}
@@ -314,7 +319,7 @@ public class MainGame : MonoBehaviour {
 			#endregion
 			#region ChooseVillain
 			//CHOOSE VILLAIN PHASE
-			if(choosevillain)
+			if(chooseVillain)
 			{
 				for(int j = 0; j < villian.Count/2; j++)
 				{
@@ -345,8 +350,8 @@ public class MainGame : MonoBehaviour {
 				{
 					if(GUI.Button(new Rect(screenWidth*.9f,screenHeight*.9f,screenWidth * .1f,screenHeight * .1f),"Next"))
 					{
-						choosemastermind = true;
-						choosevillain = false;
+						chooseMastermind = true;
+						chooseVillain = false;
 						selected = false;
 					}
 				}
@@ -354,7 +359,7 @@ public class MainGame : MonoBehaviour {
 			#endregion
 			#region ChooseMastermind
 			//CHOOSE MASTERMIND!
-			if(choosemastermind)
+			if(chooseMastermind)
 			{
 				for(int j = 0; j < mastermind.Count/2; j++)
 				{
@@ -384,8 +389,8 @@ public class MainGame : MonoBehaviour {
 				{
 					if(GUI.Button(new Rect(screenWidth*.9f,screenHeight*.9f,screenWidth * .1f,screenHeight * .1f),"Next"))
 					{
-						choosescheme = true;
-						choosemastermind = false;
+						chooseScheme = true;
+						chooseMastermind = false;
 						selected = false;
 					}
 				}
@@ -393,7 +398,7 @@ public class MainGame : MonoBehaviour {
 			#endregion
 			#region ChooseScheme
 			//CHOOSE SCHEME
-			if(choosescheme)
+			if(chooseScheme)
 			{
 				for(int j = 0; j < scheme.Count/2; j++)
 				{
@@ -423,7 +428,7 @@ public class MainGame : MonoBehaviour {
 				{
 					if(GUI.Button(new Rect(screenWidth*.9f,screenHeight*.9f,screenWidth * .1f,screenHeight * .1f),"Next"))
 					{
-						choosescheme = false;
+						chooseScheme = false;
 						selected = false;
 					}
 				}
@@ -433,11 +438,15 @@ public class MainGame : MonoBehaviour {
 		}
 	}
 
+	void CreateCards()
+	{
+	}
+
 	void addHeroToSelectedList(string chosenHero)
 	{
-		if(!selectedHeroes.Contains(chosenHero))
+		if(!heroDeck.Contains(chosenHero))
 		{
-			selectedHeroes[heroListPointer] = chosenHero; 
+			heroDeck[heroListPointer] = chosenHero; 
 			heroListPointer++;
 			if(heroListPointer == heroListMax)
 			{
