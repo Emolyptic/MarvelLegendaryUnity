@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Card{
     
-    Texture2D texture;
+	public Texture2D texture { get; set; }
 	string name;
 
 	public Card(Texture2D texture){

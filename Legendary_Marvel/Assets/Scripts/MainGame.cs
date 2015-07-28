@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class MainGame : MonoBehaviour {
 	int phase;
-
+	public GameObject cardObject;
 	#region phase 0 miniphase bools
 	bool choosePlayer		= false;
 	bool chooseHeroes		= false;
@@ -142,6 +142,11 @@ public class MainGame : MonoBehaviour {
 		phase = 0;
 		CreateCards();
 		choosePlayer = true;
+		GameObject cardPrefab = (GameObject) Instantiate(cardObject);
+		HeroScript script = cardPrefab.AddComponent<HeroScript>();
+		script.Hero =  new BlackWidow.SilentSniper ();
+		SpriteRenderer renderer = cardPrefab.GetComponent<SpriteRenderer> ();
+		renderer.sprite = Sprite.Create(script.Hero.texture,new Rect(10.0f, 10.0f, 10.0f, 10.0f),new Vector2(0.0f, 0.0f));
 	}
 	
 	// Update is called once per frame
