@@ -3,18 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 
 //POSSIBLY DON"T NEED
-enum VillainType{
+public enum VillainType{
 	Henchman,
 	Villain,
 	Mastermind
 }
 
 public class Villain : Card {
-	int Fight{get;set;}
-	int VictoryPoints{get;set;}
-	List<Bystander> bystanders;
+	public string name{get;set;}
+	public Texture2D texture{get;set;}
+	public int Fight{get;set;}
+	public int VictoryPoints{get;set;}
+	public List<Bystander> bystanders;
 
-	public Villain(Texture2D texture):base(texture)
+	public Villain(Texture2D texture)
 	{
 	}
 

@@ -2,9 +2,11 @@
 using System.Collections;
 
 public class Bystander : Card {
-	int VictoryPoints{get;set;}
+	public int VictoryPoints{get;set;}
+	public string name{get;set;}
+	public Texture2D texture{get;set;}
 
-	public Bystander(Texture2D texture):base(texture)
+	public Bystander(Texture2D texture)
 	{
 
 	}

@@ -17,7 +17,7 @@ public class MainGame : MonoBehaviour {
 
 	#region Saved Data
 	int numberOfPlayer;
-	List<string> heroDeck = new List<string>(){"","","","",""};
+	List<string> selectedHeroes = new List<string>(){"","","","",""};
 	List<string> selectedHenchmen;
 	List<string> selectedVillians;
 	List<string> shieldDeck;
@@ -262,9 +262,9 @@ public class MainGame : MonoBehaviour {
 					w++;
 				}
 				//Shows Icons
-				for(int y = 0; y < heroDeck.Count; y++)
+				for(int y = 0; y < selectedHeroes.Count; y++)
 				{
-					if(GUI.Button(new Rect(cardIconXPos,cardIconYPos + (cardIconHeight*1.2f * y) ,cardIconWidth, cardIconHeight), heroDeck[y]))
+					if(GUI.Button(new Rect(cardIconXPos,cardIconYPos + (cardIconHeight*1.2f * y) ,cardIconWidth, cardIconHeight), selectedHeroes[y]))
 					{
 
 					}
@@ -449,9 +449,9 @@ public class MainGame : MonoBehaviour {
 
 	void addHeroToSelectedList(string chosenHero)
 	{
-		if(!heroDeck.Contains(chosenHero))
+		if(!selectedHeroes.Contains(chosenHero))
 		{
-			heroDeck[heroListPointer] = chosenHero; 
+			selectedHeroes[heroListPointer] = chosenHero; 
 			heroListPointer++;
 			if(heroListPointer == heroListMax)
 			{

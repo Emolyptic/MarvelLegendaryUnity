@@ -1,13 +1,8 @@
 using UnityEngine;
 using System.Collections;
 
-public class Card{
+public interface Card{
     
-	public Texture2D texture { get; set; }
-	string name;
-
-	public Card(Texture2D texture){
-		this.texture = texture;
-	}
-
+	Texture2D texture{get;set;}
+	string name {get;set;}
 }

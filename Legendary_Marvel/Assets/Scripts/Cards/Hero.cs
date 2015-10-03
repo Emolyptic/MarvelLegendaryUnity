@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
-enum Team{ 
+public enum Team{ 
 	Avengers, 
 	Xmen, 
 	Spiderfriends, 
 	Shield,
 	None
 }
-enum Type{
+public enum Type{
 	Strength,
 	Instinct,
 	Covert,
@@ -16,13 +16,15 @@ enum Type{
 	Basic
 }
 public class Hero : Card {
-	int Cost{get;set;}
-	int Attack{get;set;}
-	int Recruit{get;set;}
+	public string name{get;set;}
+	public Texture2D texture{get;set;}
+	public int Cost{get;set;}
+	public int Attack{get;set;}
+	public int Recruit{get;set;}
 	Team Team{get;set;}
 	Type Type{get;set;}
 
-	public Hero( Texture2D texture):base(texture)
+	public Hero(Texture2D texture)
 	{
 	}
 
