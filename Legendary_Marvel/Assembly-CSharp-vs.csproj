@@ -49,8 +49,16 @@
      <Compile Include="Assets\Scripts\CardManager.cs" />
      <Compile Include="Assets\Scripts\Cards\ByStander\Bystander.cs" />
      <Compile Include="Assets\Scripts\Cards\Card.cs" />
+     <Compile Include="Assets\Scripts\Cards\Deck.cs" />
      <Compile Include="Assets\Scripts\Cards\Hero.cs" />
+     <Compile Include="Assets\Scripts\Cards\HeroScript.cs" />
+     <Compile Include="Assets\Scripts\Cards\Heroes\BlackWidow.cs" />
+     <Compile Include="Assets\Scripts\Cards\SHIELD\MariaHill.cs" />
+     <Compile Include="Assets\Scripts\Cards\SHIELD\ShieldAgent.cs" />
+     <Compile Include="Assets\Scripts\Cards\SHIELD\ShieldTrooper.cs" />
      <Compile Include="Assets\Scripts\Cards\Villain.cs" />
+     <Compile Include="Assets\Scripts\Cards\VillainScript.cs" />
+     <Compile Include="Assets\Scripts\Cards\Wound\Wound.cs" />
      <Compile Include="Assets\Scripts\DataManager.cs" />
      <Compile Include="Assets\Scripts\MainGame.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />

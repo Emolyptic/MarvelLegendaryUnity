@@ -4,9 +4,21 @@ using System.Collections.Generic;
 
 public class MainGame : MonoBehaviour {
 	int phase;
-	public GameObject cardObject;
-	#region phase 0 miniphase bools
-	bool choosePlayer		= false;
+	//public GameObject cardObject;
+
+    # region Decks
+    Deck VillianDeck;
+    Deck HeroDeck;
+    Deck MastermindDeck;
+    Deck WoundsDeck;
+    Deck BystanderDeck;
+    Deck SHIELDDeck;
+    Deck Escaped;
+    Deck KO;
+    #endregion
+
+    #region phase 0 miniphase bools
+    bool choosePlayer		= false;
 	bool chooseHeroes		= false;
 	bool chooseHenchmen		= false;
 	bool chooseVillain		= false;
@@ -17,15 +29,16 @@ public class MainGame : MonoBehaviour {
 
 	#region Saved Data
 	int numberOfPlayer;
-	List<string> selectedHeroes = new List<string>(){"","","","",""};
+	List<string> heroDeckList = new List<string>(){"","","","",""};
 	List<string> selectedHenchmen;
 	List<string> selectedVillians;
-	List<string> shieldDeck;
-	List<string> woundDeck;
-	List<string> bystanderDeck;
+	//List<string> shieldDeck;
+	//List<string> woundDeck;
+	//List<string> bystanderDeck;
 
 	string selectedMastermind;
 	string selectedScheme;
+	int schemetwistCount;
 	#endregion
 
 	#region TODO Replace these with the Dictionaries of Objects
@@ -140,25 +153,26 @@ public class MainGame : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		phase = 0;
-		CreateCards();
 		choosePlayer = true;
-		GameObject cardPrefab = (GameObject) Instantiate(cardObject);
-		HeroScript script = cardPrefab.AddComponent<HeroScript>();
-		script.Hero =  new BlackWidow.SilentSniper ();
-		SpriteRenderer renderer = cardPrefab.GetComponent<SpriteRenderer> ();
-		renderer.sprite = Sprite.Create(script.Hero.texture,new Rect(10.0f, 10.0f, 10.0f, 10.0f),new Vector2(0.0f, 0.0f));
+		//GameObject cardPrefab = (GameObject) Instantiate(cardObject);
+		//HeroScript script = cardPrefab.AddComponent<HeroScript>();
+		//script.Hero =  new BlackWidow.SilentSniper ();
+		//SpriteRenderer renderer = cardPrefab.GetComponent<SpriteRenderer> ();
+		//renderer.sprite = Sprite.Create(script.Hero.texture,new Rect(10.0f, 10.0f, 10.0f, 10.0f),new Vector2(0.0f, 0.0f));
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if(phase == 0) //Setup
-		{	
-			SetupUpdate();
-		}
-		else if(phase == 1)
-		{
-
-		}
+        switch (phase)
+        {
+            case 0:
+                SetupUpdate();
+                break;
+            case 1:
+                break;
+            default:
+                break;
+        }
 	}
 	void SetupUpdate()
 	{
@@ -166,8 +180,9 @@ public class MainGame : MonoBehaviour {
 	}
 	void OnGUI()
 	{
-		if(phase == 0)
+        switch(phase)
 		{
+            case 0:
 			#region Phase 0 Setup
 
 			#region Choose Player Amount
@@ -262,9 +277,9 @@ public class MainGame : MonoBehaviour {
 					w++;
 				}
 				//Shows Icons
-				for(int y = 0; y < selectedHeroes.Count; y++)
+				for(int y = 0; y < heroDeckList.Count; y++)
 				{
-					if(GUI.Button(new Rect(cardIconXPos,cardIconYPos + (cardIconHeight*1.2f * y) ,cardIconWidth, cardIconHeight), selectedHeroes[y]))
+					if(GUI.Button(new Rect(cardIconXPos,cardIconYPos + (cardIconHeight*1.2f * y) ,cardIconWidth, cardIconHeight), heroDeckList[y]))
 					{
 
 					}
@@ -435,23 +450,100 @@ public class MainGame : MonoBehaviour {
 					{
 						chooseScheme = false;
 						selected = false;
+                        CreateCards();
+                        CreateChosenDecks();
+                        phase = 1;
 					}
 				}
 			}
 			#endregion
 			#endregion
+            break;
+            case 1:
+            break;
+            default:
+            break;
 		}
 	}
 
+    void CreateChosenDecks()
+    {
+        VillianDeck     = new Deck();
+        CreateVillianDeck();
+
+        HeroDeck        = new Deck();
+        CreateHeroDeck();
+
+        MastermindDeck  = new Deck();
+        CreateMastermindDeck();
+    }
+
+    void CreateMastermindDeck()
+    {
+        for (int c = 0; c < 4; c++)
+        {
+            
+        }
+    }
+
+    void CreateHeroDeck()
+    {
+        for(int d = 0; d < heroDeckList.Count; d++)
+        {
+			//TODO INSERT HERO CARDS
+        }
+    }
+
+    void CreateVillianDeck()
+    {
+		for (int e = 0; e < selectedVillians.Count; e++)
+        {
+			//TODO INSERT VILLIANS
+        }
+		for ( int f = 0; f < selectedHenchmen.Count; f++)
+		{
+			//TODO INSERT HENCHMEN
+		}
+		for ( int g = 0; g < bystanderListMax; g++)
+		{
+			//TODO INSERT BYSTANDERS
+		}
+		for ( int h = 0; h < 5; h++)
+		{
+			//TODO INSERT MASTER STRIKE
+		}
+		for ( int i = 0; i < 4; i++)
+		{
+			//TODO INSERT SCHEME TWISTS
+		}
+
+    }
 	void CreateCards()
 	{
+        WoundsDeck = new Deck(); 
+            for(int a = 0; a < 30; a++)
+            {
+                WoundsDeck.AddCardToDeck(new Wound((Texture2D)Resources.Load("Textures/wound_30_md")));
+		}
+        BystanderDeck = new Deck();
+            for (int b = 0; b < 30; b++)
+            {
+                BystanderDeck.AddCardToDeck(new Bystander((Texture2D)Resources.Load("Textures/bystander_30_md")));
+            }
+        SHIELDDeck = new Deck();
+            for (int c = 0; c < 30; c++)
+            {
+                SHIELDDeck.AddCardToDeck(new MariaHill((Texture2D)Resources.Load("Textures/shield_officer_maria_hill_30_md")));
+            }
+        Escaped     = new Deck(); 
+        KO          = new Deck(); 
 	}
 
 	void addHeroToSelectedList(string chosenHero)
 	{
-		if(!selectedHeroes.Contains(chosenHero))
+		if(!heroDeckList.Contains(chosenHero))
 		{
-			selectedHeroes[heroListPointer] = chosenHero; 
+			heroDeckList[heroListPointer] = chosenHero; 
 			heroListPointer++;
 			if(heroListPointer == heroListMax)
 			{
