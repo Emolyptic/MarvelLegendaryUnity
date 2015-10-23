@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ShieldAgent : Card {
+public class ShieldAgent : Hero {
 	
-	public ShieldAgent(Texture2D texture)
-		: base(texture)
+	public ShieldAgent(): base((Texture2D)Resources.Load("Textures/shield_agent_40_md"))
 	{
-		attack = 0;
-		recruit = 1;
-		victorypoints = 0;
+		Attack = 0;
+		Recruit = 1;
 	}
 }

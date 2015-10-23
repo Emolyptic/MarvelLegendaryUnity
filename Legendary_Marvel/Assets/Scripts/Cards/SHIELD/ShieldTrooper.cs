@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ShieldTrooper : Card {
+public class ShieldTrooper : Hero {
 	
-	public ShieldTrooper(Texture2D texture)
-		: base(texture)
+	public ShieldTrooper(): base((Texture2D)Resources.Load("Textures/shield_trooper_20_md"))
 	{
-		attack = 1;
-		recruit = 0;
-		victorypoints = 0;
+		Attack = 1;
+		Recruit = 0;
 	}
 }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Deck {
-    List<Card> cards;
+    public List<Card> cards;
     
 	// Use this for initialization
 	public Deck () {

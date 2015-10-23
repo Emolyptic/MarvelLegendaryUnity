@@ -16,14 +16,15 @@ enum Type{
 	Basic
 }
 public class Hero : Card {
-	int Cost{get;set;}
-	int Attack{get;set;}
-	int Recruit{get;set;}
+	public int Cost{get;set;}
+	public int Attack{get;set;}
+	public int Recruit{get;set;}
 	Team Team{get;set;}
 	Type Type{get;set;}
 
 	public Hero(Texture2D texture):base(texture)
 	{
+		cardType = CARDTYPE.Hero;
 	}
 
 	public virtual void Ability(Player player)

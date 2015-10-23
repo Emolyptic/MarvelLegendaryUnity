@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MariaHill : Card
+public class MariaHill : Hero
 {
-    public MariaHill(Texture2D texture) : base(texture)
+	public MariaHill() : base((Texture2D)Resources.Load("Textures/shield_officer_maria_hill_30_md"))
     {
-		attack = 0;
-		recruit = 2;
-		victorypoints = 0;
+		Attack = 0;
+		Recruit = 2;
     }
 }

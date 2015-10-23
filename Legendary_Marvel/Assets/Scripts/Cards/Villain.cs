@@ -12,10 +12,11 @@ enum VillainType{
 public class Villain : Card {
 	int Fight{get;set;}
 	int VictoryPoints{get;set;}
-	List<Bystander> bystanders;
+	public List<Bystander> bystanders;
 
 	public Villain(Texture2D texture):base(texture)
 	{
+		cardType = CARDTYPE.Villain;
 	}
 
 	public virtual void FightEffect()

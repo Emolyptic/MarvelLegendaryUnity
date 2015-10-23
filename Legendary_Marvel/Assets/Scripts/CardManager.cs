@@ -1,72 +1,148 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class CardManager : MonoBehaviour {
+	DataManager gameData;
+	MainGame mainGame;
 
 	// Use this for initialization
 	void Start () {
-	
+		gameData = GameObject.Find("GameData").GetComponent<DataManager>();
+		mainGame = GameObject.Find("RunGameObject").GetComponent<MainGame>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	
 	}
-	void AddCardToPlayersHand(Card card, Player player)
+
+	public Card getTopCardofDeck(Deck deck)
 	{
+		Card temp = deck.cards[0];
+		deck.cards.RemoveAt(0);
+		return temp;
 	}
 
-	void AddCardToPlayersDiscard(Card card, Player player)
+	public void AddCardToPlayersHand(Card card, Player player)
 	{
+		player.hand.Add(card);
 	}
 
-	void LookatTopCards(Deck deck, int NumOfCards)
+	public void DiscardPlayersHand(Player player)
 	{
+		while(player.hand.Count != 0)
+		{
+			AddCardToPlayersDiscard(player.hand[0],player);
+			player.hand.RemoveAt(0);
+		}
+//		if(player.hand.Count != 0){
+//			for(int i = 0; i < player.hand.Count; i++)
+//			{
+//				AddCardToPlayersDiscard(player.hand[i],player);
+//			}
+//			player.hand.RemoveRange(0,player.hand.Count);
+//		}
+	}
+	public void AddCardToPlayersDiscard(Card card, Player player)
+	{
+		player.discard.AddCardToDeck(card);
 	}
 
-	void DiscardTopCards(Deck deck, int NumOfCards)
+	public void LookatTopCards(Deck deck, int NumOfCards)
 	{
+		//This needs to do something else with this
 	}
 
-	void ShuffleDeck(Deck deck)
+	public void DiscardTopCards(Player player, Deck deck, int NumOfCards)
 	{
+		for(int i = 0; i< NumOfCards; i++)
+		{
+			player.discard.AddCardToDeck(deck.cards[0]);
+			deck.cards.RemoveAt(0);
+		}
 	}
 
-	void AddAttackBonus(int amount)
+	public void ShuffleDeck(Deck deck)
 	{
+		for(int i = 0; i < deck.cards.Count; i++)
+		{
+			Card temp = deck.cards[i];
+			int randomIndex = Random.Range (i, deck.cards.Count);
+			deck.cards[i] = deck.cards[randomIndex];
+			deck.cards[randomIndex] = temp;
+		}
 	}
 
-	void DrawCard(Deck deck, Player player)
+	public void AddAttackBonus(int amount)
 	{
+		mainGame.currentAttack += amount;
 	}
 
-	void AddRecruit(int amount)
+	public void DrawCard(Deck deck, Player player)
 	{
+		//As long as you have a card to pull
+		if(deck.cards.Count != 0)
+		{
+			player.hand.Add (deck.cards[0]);
+			deck.cards.RemoveAt(0);
+		}
+		else{
+			//put all discard into deck
+			for(int i = 0; i< player.discard.cards.Count; i++)
+			{
+				player.deck.AddCardToDeck(player.discard.cards[i]);
+			}
+			//empty discard deck
+			player.discard.cards.RemoveRange(0,player.discard.cards.Count);
+			//Shuffle deck
+			ShuffleDeck(player.deck);
+
+			//Draw Card that you need
+			player.hand.Add (deck.cards[0]);
+			deck.cards.RemoveAt(0);
+		}
 	}
 
-	void KOHero(Hero hero)
+	public void AddRecruit(int amount)
 	{
+		mainGame.currentRecruit += amount;
 	}
 
-	void RescueBystander(Deck bystanderDeck, Player player)
+	public void KOHero(Hero hero)
 	{
+		mainGame.KO.Add(hero);
 	}
 
-	void AddBystanderToVillain(Bystander bystander, Villain villain)
+	public void RescueBystander(Deck bystanderDeck, Player player)
 	{
+		player.victoryPile.AddCardToDeck(bystanderDeck.cards[0]);
+		bystanderDeck.cards.RemoveAt(0);
 	}
 
-	void KOVillain(Villain villain)
+	public void AddBystanderToVillain(Bystander bystander, Villain villain)
 	{
+		villain.bystanders.Add(bystander);
 	}
 
-	Deck ShuffleDecksTogether(Deck deckOne, Deck deckTwo)
+	public void KOVillain(Villain villain)
 	{
-		return deckOne;
+		mainGame.KO.Add(villain);
 	}
 
-	void AddToVictoryPile(Player player, Card card)
+	public Deck ShuffleDecksTogether(Deck deckOne, Deck deckTwo)
 	{
+		Deck temp = deckOne;
+		for(int i = 0; i < deckTwo.cards.Count; i++)
+		{
+			temp.AddCardToDeck(deckTwo.cards[i]);
+		}
+		return temp;
+	}
+
+	public void AddToVictoryPile(Player player, Card card)
+	{
+		player.victoryPile.AddCardToDeck(card);
 	}
 
 }

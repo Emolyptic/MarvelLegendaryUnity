@@ -5,6 +5,11 @@ public class BlackWidow : MonoBehaviour {
 	public class SilentSniper:Hero{
 		public SilentSniper():base((Texture2D)Resources.Load("Textures/black_widow_silent_sniper_md")){
 			Debug.Log ("sniper created");
+			//TODO:Give Type
+			//TODO:Give Team
+			//TODO:Give Attack
+			//TODO:Give Recruit
+			//TODO:Give Cost
 		}
 		
 		public override void Ability(Player player)
@@ -19,6 +24,11 @@ public class BlackWidow : MonoBehaviour {
 
 	public class CovertOperation:Hero{
 		public CovertOperation():base((Texture2D)Resources.Load("Textures/black_widow_covert_operation_3_md")){
+			//TODO:Give Type
+			//TODO:Give Team
+			//TODO:Give Attack
+			//TODO:Give Recruit
+			//TODO:Give Cost
 		}
 		
 		public override void Ability(Player player)
@@ -34,6 +44,11 @@ public class BlackWidow : MonoBehaviour {
 
 	public class DangerousRescue:Hero{
 		public DangerousRescue():base((Texture2D)Resources.Load("Textures/black_widow_dangerous_rescue_5_md")){
+			//TODO:Give Type
+			//TODO:Give Team
+			//TODO:Give Attack
+			//TODO:Give Recruit
+			//TODO:Give Cost
 		}
 		
 		public override void Ability(Player player)
@@ -49,6 +64,11 @@ public class BlackWidow : MonoBehaviour {
 
 	public class MissionAccomplished:Hero{
 		public MissionAccomplished():base((Texture2D)Resources.Load("Textures/black_widow_mission_accomplished_5_md")){
+			//TODO:Give Type
+			//TODO:Give Team
+			//TODO:Give Attack
+			//TODO:Give Recruit
+			//TODO:Give Cost
 		}
 		
 		public override void Ability(Player player)

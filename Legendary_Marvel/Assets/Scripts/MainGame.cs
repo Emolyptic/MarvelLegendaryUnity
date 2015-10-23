@@ -3,586 +3,303 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class MainGame : MonoBehaviour {
-	int phase;
-	//public GameObject cardObject;
+	DataManager gameData;
+	CardManager cardManager;
+	public GameObject cardPrefab;
 
-    # region Decks
-    Deck VillianDeck;
-    Deck HeroDeck;
-    Deck MastermindDeck;
-    Deck WoundsDeck;
-    Deck BystanderDeck;
-    Deck SHIELDDeck;
-    Deck Escaped;
-    Deck KO;
-    #endregion
+	public Player currentPlayer;
+	public int currentPlayerNumber = 0;
+	public int currentAttack;
+	public int currentRecruit;
+	public Card drawnVillainCard;
+	public List<GameObject> currentPhysicalHand = new List<GameObject>();
 
-    #region phase 0 miniphase bools
-    bool choosePlayer		= false;
-	bool chooseHeroes		= false;
-	bool chooseHenchmen		= false;
-	bool chooseVillain		= false;
-	bool chooseMastermind	= false;
-	bool chooseScheme 		= false;
-	bool selected  			= false;
-	#endregion
+	//List<Card> HQ;
+	//List<Card> cityScape;
+	public List<Card> KO;
+	public List<GameObject> gameCityScape;
+	public List<GameObject> gameHQ;
+	GameObject gameMastermind;
+	GameObject gameshield;
+	GameObject gameScheme;
 
-	#region Saved Data
-	int numberOfPlayer;
-	List<string> heroDeckList = new List<string>(){"","","","",""};
-	List<string> selectedHenchmen;
-	List<string> selectedVillians;
-	//List<string> shieldDeck;
-	//List<string> woundDeck;
-	//List<string> bystanderDeck;
-
-	string selectedMastermind;
-	string selectedScheme;
-	int schemetwistCount;
-	#endregion
-
-	#region TODO Replace these with the Dictionaries of Objects
-	List<string> heroes = new List<string>(){
-		"Black Widow",
-		"Captain America",
-		"Cyclops",
-		"Deadpool",
-		"Emma Frost",
-		"Gambit",
-		"Hawk Eye",
-		"Hulk",
-		"Iron Man",
-		"Nick Fury",
-		"Rouge",
-		"Spiderman",
-		"Storm",
-		"Thor",
-		"Wolverine"
-	};
-
-	List<string> henchmen = new List<string>(){
-		"Sentinel",
-		"DoomBot Legion",
-		"Hand Ninjas",
-		"Savage Land Mutates"
-	};
-
-	List<string> villian = new List<string>(){
-		"Brotherhood",
-		"Hydra",
-		"Masters of Evil",
-		"Spider foes",
-		"Skrull"
-	};
-
-	List<string> mastermind = new List<string>(){
-		"Red Skull",
-		"Loki",
-		"Magneto",
-		"Doctor Doom"
-	};
-
-	List<string> scheme = new List<string>(){
-		"Pull Reality into the Negative Zone",
-		"The Legacy Virus",
-		"Midtown Bank Robbery",
-		"Negative Zone Prison Breakout",
-		"Portals to the Dark Dimension",
-		"Replace Earth's Leaders with KillBots",
-		"Secret Invasion of the Skrull Shapeshifters",
-		"Super Hero Civil War",
-		"Unleash the Power of the Cosmic Cube"
-	};
-
-	#endregion
-	//Screen size usage
-	
-	static float screenWidth = Screen.width;
-	static float screenHeight = Screen.height;
-	
-	#region Button Positions and Measurements
-	
-	float playerButtonXPos 		= screenWidth * .1f;
-	float playerButtonYPos 		= screenHeight* .1f;
-	float playerButtonWidth 	= screenWidth * .18f;
-	float playerButtonHeight 	= screenHeight* .1f;
-
-	float heroButtonXPos 	= screenWidth * .1f;
-	float heroButtonYPos 	= screenHeight* .1f;
-	float heroButtonWidth	= screenWidth * .18f;
-	float heroButtonHeight 	= screenHeight* .1f;
-
-	float cardIconXPos 	= screenWidth * .9f;
-	float cardIconYPos 	= screenHeight* .1f;
-	float cardIconWidth	= screenWidth * .18f;
-	float cardIconHeight = screenHeight* .1f;
-
-	float henchmenButtonXPos 	= screenWidth * .1f;
-	float henchmenButtonYPos 	= screenHeight* .1f;
-	float henchmenButtonWidth	= screenWidth * .18f;
-	float henchmenButtonHeight 	= screenHeight* .1f;
-
-	float villianButtonXPos 	= screenWidth * .1f;
-	float villianButtonYPos 	= screenHeight* .1f;
-	float villianButtonWidth	= screenWidth * .18f;
-	float villianButtonHeight 	= screenHeight* .1f;
-
-	float mastermindButtonXPos 	= screenWidth * .1f;
-	float mastermindButtonYPos 	= screenHeight* .1f;
-	float mastermindButtonWidth	= screenWidth * .18f;
-	float mastermindButtonHeight= screenHeight* .1f;
-
-	float schemeButtonXPos 	= screenWidth * .1f;
-	float schemeButtonYPos 	= screenHeight* .1f;
-	float schemeButtonWidth	= screenWidth * .18f;
-	float schemeButtonHeight= screenHeight* .1f;
-	#endregion
-
-	//Temps for Hero selection
-	int heroListPointer = 0;
-	int heroListMax = 5; //Default
-
-	int villainListPointer = 0;
-	int villainListMax = 0;
-
-	int henchmanListPointer = 0;
-	int henchmanListMax = 0;
-	int bystanderListMax = 0;
+	//Variables for making and showing hand.
+	bool showHand = false;
+	float cardIconXPos = 0;
+	float cardIconYPos = Screen.height * .9f;
+	float cardIconWidth;
+	float cardIconHeight;
 
 
 	// Use this for initialization
 	void Start () {
-		phase = 0;
-		choosePlayer = true;
-		//GameObject cardPrefab = (GameObject) Instantiate(cardObject);
-		//HeroScript script = cardPrefab.AddComponent<HeroScript>();
-		//script.Hero =  new BlackWidow.SilentSniper ();
-		//SpriteRenderer renderer = cardPrefab.GetComponent<SpriteRenderer> ();
-		//renderer.sprite = Sprite.Create(script.Hero.texture,new Rect(10.0f, 10.0f, 10.0f, 10.0f),new Vector2(0.0f, 0.0f));
+		//Get GameData and Card Manager
+		gameData = GameObject.Find("GameData").GetComponent<DataManager>();
+		cardManager = GameObject.Find("RunGameObject").GetComponent<CardManager>();
+
+		//Initialize HQ cards and gameObjects
+		//HQ = new List<Card>();
+		//cityScape = new List<Card>();
+		KO = new List<Card>();
+		gameCityScape = new List<GameObject>();
+		gameHQ = new List<GameObject>();
+
+		for(int i = 0; i < 5; i++)
+		{
+			//HQ.Add (null);
+			//cityScape.Add(null);
+		}
+
+		gameCityScape.Add(GameObject.Find("Sewers"));
+		gameCityScape.Add(GameObject.Find("Bank"));
+		gameCityScape.Add(GameObject.Find("Rooftops"));
+		gameCityScape.Add(GameObject.Find("Streets"));
+		gameCityScape.Add(GameObject.Find("Bridge"));
+
+		gameHQ.Add(GameObject.Find ("HQ 1"));
+		gameHQ.Add(GameObject.Find ("HQ 2"));
+		gameHQ.Add(GameObject.Find ("HQ 3"));
+		gameHQ.Add(GameObject.Find ("HQ 4"));
+		gameHQ.Add(GameObject.Find ("HQ 5"));
+
+		//Grab GameObjects from around the map
+		gameMastermind = GameObject.Find ("MasterMind");
+		gameshield = GameObject.Find ("SHIELD");
+		gameScheme = GameObject.Find ("Scheme");
+
+		currentPlayer = gameData.playerOrder[0];
+
+
+		GameBoardSetup();
+		NextTurn();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        switch (phase)
-        {
-            case 0:
-                SetupUpdate();
-                break;
-            case 1:
-                break;
-            default:
-                break;
-        }
-	}
-	void SetupUpdate()
-	{
+		//If Hero Deck Runs out. End game.
+		//If Villain Deck runs out?
 
 	}
+	void NextTurn(){
+		//Start Turn
+		drawnVillainCard = gameData.villainDeck.cards[0];
+		gameData.villainDeck.cards.RemoveAt(0);
+		//Draw Villain Deck
+		Debug.Log (drawnVillainCard.cardType + " ::::: " + drawnVillainCard.GetType());
+		switch (drawnVillainCard.cardType)
+		{
+		case Card.CARDTYPE.Bystander:
+			bool giveToMasterMind = true;
+			//check city for first villain. If not put under Mastermind.
+			for (int i = 0; i < gameCityScape.Count; i++)
+			{
+				if(gameCityScape[i].GetComponent<VillainScript>().card != null)
+				{
+					gameCityScape[i].GetComponent<VillainScript>().card.bystanders.Add((Bystander)drawnVillainCard);
+					giveToMasterMind = false;
+					break;
+				}
+			}
+			if(giveToMasterMind)
+			{
+				gameMastermind.GetComponent<VillainScript>().card.bystanders.Add((Bystander)drawnVillainCard);
+			}
+
+			break;
+		case Card.CARDTYPE.MasterStrike:
+			// Mastermind MasterStrike Ability
+			gameData.gameMastermind.MasterStrike();
+			break;
+		case Card.CARDTYPE.SchemeTwist:
+			//Twist happens and update counter
+			gameData.gameScheme.Twist(gameData.numberOfTwistsPlayed);
+			gameData.numberOfTwistsPlayed++;
+			break;
+		case Card.CARDTYPE.Villain:
+			//check city for last avaliable slot.
+			//if none escape last villain.
+			//move all villains down one
+			//place new villain in first spot.
+			bool escaped = true;
+			for (int q = 0; q < gameCityScape.Count; q++)
+			{
+				if(gameCityScape[q].GetComponent<VillainScript>().card != null)
+				{
+					gameCityScape[q].GetComponent<VillainScript>().card = (Villain)drawnVillainCard;
+					gameCityScape[q].GetComponent<Renderer>().material.mainTexture = gameCityScape[q].GetComponent<VillainScript>().card.texture;
+					escaped = false;
+					break;
+				}
+			}
+			if(escaped)
+			{
+				gameCityScape[4].GetComponent<VillainScript>().card.EscapeEffect();
+				//TODO MOVE THEM ON DOWN!
+			}
+			break;
+		}
+		//Scheme Twist
+
+		//Master Strike
+
+		//Bystander
+
+		//Villain to the City
+
+		//Move Villains in city if needs be
+
+		//Escaped Villain
+
+
+	}
+
+
+	void GameBoardSetup ()
+	{
+		//Shuffle Villain and Hero Decks
+		cardManager.ShuffleDeck(gameData.heroDeck);
+		cardManager.ShuffleDeck(gameData.villainDeck);
+
+		//Make Mastermind Deck look like Mastermind
+		gameMastermind.GetComponent<Renderer>().material.mainTexture = gameData.gameMastermind.texture;
+
+		//Make Scheme the right scheme
+		gameScheme.GetComponent<Renderer>().material.mainTexture = gameData.gameScheme.texture;
+
+		//Draw the 5 cards from Heroes deck.
+		gameHQ[0].GetComponent<HeroScript>().card = (Hero)cardManager.getTopCardofDeck(gameData.heroDeck);
+		gameHQ[0].GetComponent<Renderer>().material.mainTexture = gameHQ[0].GetComponent<HeroScript>().card.texture;
+		gameHQ[1].GetComponent<HeroScript>().card = (Hero)cardManager.getTopCardofDeck(gameData.heroDeck);
+		gameHQ[1].GetComponent<Renderer>().material.mainTexture = gameHQ[1].GetComponent<HeroScript>().card.texture;
+		gameHQ[2].GetComponent<HeroScript>().card = (Hero)cardManager.getTopCardofDeck(gameData.heroDeck);
+		gameHQ[2].GetComponent<Renderer>().material.mainTexture = gameHQ[2].GetComponent<HeroScript>().card.texture;
+		gameHQ[3].GetComponent<HeroScript>().card = (Hero)cardManager.getTopCardofDeck(gameData.heroDeck);
+		gameHQ[3].GetComponent<Renderer>().material.mainTexture = gameHQ[3].GetComponent<HeroScript>().card.texture;
+		gameHQ[4].GetComponent<HeroScript>().card = (Hero)cardManager.getTopCardofDeck(gameData.heroDeck);
+		gameHQ[4].GetComponent<Renderer>().material.mainTexture = gameHQ[4].GetComponent<HeroScript>().card.texture;
+
+		//Shuffle all players decks and give them hands.
+		for(int x = 0; x < gameData.playerOrder.Count; x++)
+		{
+			cardManager.ShuffleDeck(gameData.playerOrder[x].deck);
+
+			for(int c = 0; c < 6; c++)
+			{
+				cardManager.DrawCard(gameData.playerOrder[x].deck, gameData.playerOrder[x]);
+			}
+		}
+		InstantiatePhysicalHand();
+
+	}
+
+	void InstantiatePhysicalHand ()
+	{
+		for(int i = 0; i < currentPlayer.hand.Count; i++)
+		{
+			//TODO Put them in the right spot.
+			float xcoor = 36 - (10*i);
+			float zcoor = 20f;
+			GameObject temp = Instantiate(cardPrefab,new Vector3(xcoor,0,zcoor), Quaternion.identity) as GameObject; //between x = 36 and -25
+			temp.AddComponent<HeroScript>();
+			temp.GetComponent<HeroScript>().card = (Hero)currentPlayer.hand[i];
+			temp.GetComponent<HeroScript>().inHand = true;
+			temp.tag = "HandShown";
+			temp.GetComponent<Renderer>().material.mainTexture = currentPlayer.hand[i].texture;	
+			
+			temp.SetActive(false);
+			currentPhysicalHand.Add(temp);
+		}
+	}
+
+	//ON GUI END TURN BUTTON
+	//Swap out Current Player
+	//Show current Player hand
 	void OnGUI()
 	{
-        switch(phase)
+		//End Turn Button.
+		if(GUI.Button(new Rect(Screen.width *.8f,Screen.height * .9f,Screen.width *.2f,Screen.height * .1f),"End Turn"))
 		{
-            case 0:
-			#region Phase 0 Setup
+			//put hand in discard pile.
+			cardManager.DiscardPlayersHand(currentPlayer);
 
-			#region Choose Player Amount
-			if(choosePlayer)
-			{
-				for(int i = 0; i < 5; i++)
-				{	
-					if(GUI.Button(new Rect(playerButtonXPos,playerButtonYPos+(playerButtonHeight*1.2f*i) ,playerButtonWidth, playerButtonHeight),(i+1).ToString() + " Players"))
-					{
-						numberOfPlayer = i;
-						selected = true;
-					}
-				}
-				if(selected)
-				{
-					if(GUI.Button(new Rect(screenWidth*.9f,screenHeight*.9f,screenWidth * .1f,screenHeight * .1f),"Next"))
-					{
-						chooseHeroes = true;
-						choosePlayer = false;
-						selected = false;
-						switch(numberOfPlayer)
-						{
-						case 1:
-							villainListMax = 2;
-							selectedVillians = new List<string>(){"",""};
-
-							henchmanListMax = 1;
-							selectedHenchmen = new List<string>(){""};
-
-							bystanderListMax = 2;
-							break;
-						case 2:
-							villainListMax = 2;
-							selectedVillians = new List<string>(){"",""};
-
-							henchmanListMax = 1;
-							selectedHenchmen = new List<string>(){""};
-
-							bystanderListMax = 2;
-							break;
-						case 3:
-							villainListMax = 3;
-							selectedVillians = new List<string>(){"","",""};
-
-							henchmanListMax = 1;
-							selectedHenchmen = new List<string>(){""};
-
-							bystanderListMax = 8;
-							break;
-						case 4:
-							villainListMax = 3;
-							selectedVillians = new List<string>(){"","",""};
-
-							henchmanListMax = 2;
-							selectedHenchmen = new List<string>(){"",""};
-
-							bystanderListMax = 8;
-							break;
-						case 5:
-							villainListMax = 4;
-							selectedVillians = new List<string>(){"","","",""};
-
-							henchmanListMax = 2;
-							selectedHenchmen = new List<string>(){"",""};
-
-							bystanderListMax = 12;
-							break;
-						}
-					}
-				}
-			}
-			#endregion
-			#region ChooseHero
-			//CHOOSE HERO PHASE
-			if(chooseHeroes)
-			{
-				for(int j = 0; j < heroes.Count/2; j++)
-				{
-					if(GUI.Button(new Rect(heroButtonXPos,heroButtonYPos+(heroButtonHeight*1.2f*j) ,heroButtonWidth, heroButtonHeight),heroes[j] ))
-					{
-						addHeroToSelectedList(heroes[j]);
-					}
-				}
-				//For column positioning
-				int w = 0;
-				for(int k = heroes.Count/2; k < heroes.Count; k++)
-				{
-					if(GUI.Button(new Rect(heroButtonXPos + (heroButtonWidth * 2),heroButtonYPos+(heroButtonHeight*1.2f*w) ,heroButtonWidth, heroButtonHeight),heroes[k] ))
-					{
-						addHeroToSelectedList(heroes[k]);
-					}
-					w++;
-				}
-				//Shows Icons
-				for(int y = 0; y < heroDeckList.Count; y++)
-				{
-					if(GUI.Button(new Rect(cardIconXPos,cardIconYPos + (cardIconHeight*1.2f * y) ,cardIconWidth, cardIconHeight), heroDeckList[y]))
-					{
-
-					}
-				}
-
-				if(selected)
-				{
-					if(GUI.Button(new Rect(screenWidth*.9f,screenHeight*.9f,screenWidth * .1f,screenHeight * .1f),"Next"))
-					{
-						chooseHenchmen = true;
-						chooseHeroes = false;
-						selected = false;
-					}
-				}
-			}
-			#endregion
-			#region ChooseHenchmen
-			//CHOOSE HENCHMEN PHASE
-			if(chooseHenchmen)
+			//Get rid of cards on the screen
+			//GameObject[] toDelete = GameObject.FindGameObjectsWithTag("HandShown");
+			if(currentPhysicalHand.Count != 0)
 			{
 
-				for(int j = 0; j < henchmen.Count/2; j++)
+				for(int y = 0; y < currentPhysicalHand.Count; y++)
 				{
-					if(GUI.Button(new Rect(henchmenButtonXPos,henchmenButtonYPos+(henchmenButtonHeight*1.2f*j) ,henchmenButtonWidth, henchmenButtonHeight),henchmen[j] ))
-					{
-						addHenchmenToSelectedList(henchmen[j]);
-					}
+					//currentHand.RemoveAt(y);
+					Destroy(currentPhysicalHand[y]);
+					//Destroy(toDelete[y]);
 				}
-				//For column positioning
-				int w = 0;
-				for(int k = henchmen.Count/2; k < henchmen.Count; k++)
+				int temp = currentPhysicalHand.Count;
+				for(int p = 0; p < temp; p++)
 				{
-					if(GUI.Button(new Rect(henchmenButtonXPos + (henchmenButtonWidth * 2),henchmenButtonYPos+(henchmenButtonHeight*1.2f*w) ,henchmenButtonWidth, henchmenButtonHeight),henchmen[k] ))
-					{
-						addHenchmenToSelectedList(henchmen[k]);
-					}
-					w++;
-				}
-				//Shows Icons
-				for(int y = 0; y < selectedHenchmen.Count; y++)
-				{
-					if(GUI.Button(new Rect(cardIconXPos,cardIconYPos + (cardIconHeight*1.2f * y) ,cardIconWidth, cardIconHeight), selectedHenchmen[y]))
-					{
-						
-					}
-				}
-				if(selected)
-				{
-					if(GUI.Button(new Rect(screenWidth*.9f,screenHeight*.9f,screenWidth * .1f,screenHeight * .1f),"Next"))
-					{
-						chooseVillain = true;
-						chooseHenchmen = false;
-						selected = false;
-					}
+					currentPhysicalHand.RemoveAt(0);
 				}
 			}
-			#endregion
-			#region ChooseVillain
-			//CHOOSE VILLAIN PHASE
-			if(chooseVillain)
+			//Draw cards from deck
+			for(int i = 0; i < 6; i++)
 			{
-				for(int j = 0; j < villian.Count/2; j++)
-				{
-					if(GUI.Button(new Rect(villianButtonXPos,villianButtonYPos+(villianButtonHeight*1.2f*j) ,villianButtonWidth, villianButtonHeight),villian[j] ))
-					{
-						addVillianToSelectedList(villian[j]);
-					}
-				}
-				//For column positioning
-				int w = 0;
-				for(int k = villian.Count/2; k < villian.Count; k++)
-				{
-					if(GUI.Button(new Rect(villianButtonXPos + (villianButtonWidth * 2),villianButtonYPos+(villianButtonHeight*1.2f*w) ,villianButtonWidth, villianButtonHeight),villian[k] ))
-					{
-						addVillianToSelectedList(villian[k]);
-					}
-					w++;
-				}
-				//Shows Icons
-				for(int y = 0; y < selectedVillians.Count; y++)
-				{
-					if(GUI.Button(new Rect(cardIconXPos,cardIconYPos + (cardIconHeight*1.2f * y) ,cardIconWidth, cardIconHeight), selectedVillians[y]))
-					{
-						
-					}
-				}
-				if(selected)
-				{
-					if(GUI.Button(new Rect(screenWidth*.9f,screenHeight*.9f,screenWidth * .1f,screenHeight * .1f),"Next"))
-					{
-						chooseMastermind = true;
-						chooseVillain = false;
-						selected = false;
-					}
-				}
+				cardManager.DrawCard(currentPlayer.deck, currentPlayer);
 			}
-			#endregion
-			#region ChooseMastermind
-			//CHOOSE MASTERMIND!
-			if(chooseMastermind)
-			{
-				for(int j = 0; j < mastermind.Count/2; j++)
-				{
-					if(GUI.Button(new Rect(mastermindButtonXPos,mastermindButtonYPos+(mastermindButtonHeight*1.2f*j) ,mastermindButtonWidth, mastermindButtonHeight),mastermind[j] ))
-					{
-						selectedMastermind = mastermind[j];
-						selected = true;
-					}
-				}
-				//For column positioning
-				int w = 0;
-				for(int k = mastermind.Count/2; k < mastermind.Count; k++)
-				{
-					if(GUI.Button(new Rect(mastermindButtonXPos + (mastermindButtonWidth * 2),mastermindButtonYPos+(mastermindButtonHeight*1.2f*w) ,mastermindButtonWidth, mastermindButtonHeight),mastermind[k] ))
-					{
-						selectedMastermind = mastermind[k];
-						selected = true;
-					}
-					w++;
-				}
-				//Shows Icons
-					if(GUI.Button(new Rect(cardIconXPos,cardIconYPos + (cardIconHeight*1.2f) ,cardIconWidth, cardIconHeight), selectedMastermind))
-					{
-						
-					}
-				if(selected)
-				{
-					if(GUI.Button(new Rect(screenWidth*.9f,screenHeight*.9f,screenWidth * .1f,screenHeight * .1f),"Next"))
-					{
-						chooseScheme = true;
-						chooseMastermind = false;
-						selected = false;
-					}
-				}
+			//Next player
+			currentPlayerNumber++;
+			//Current player is next in the playerorder.
+			if(currentPlayerNumber < gameData.numberOfPlayer){
+				currentPlayer = gameData.playerOrder[currentPlayerNumber]; //I think the ++ should change the variable if not I will change it.
 			}
-			#endregion
-			#region ChooseScheme
-			//CHOOSE SCHEME
-			if(chooseScheme)
-			{
-				for(int j = 0; j < scheme.Count/2; j++)
-				{
-					if(GUI.Button(new Rect(schemeButtonXPos,schemeButtonYPos+(schemeButtonHeight*1.2f*j) ,schemeButtonWidth, schemeButtonHeight),scheme[j] ))
-					{
-						selectedScheme = scheme[j];
-						selected = true;
-					}
-				}
-				//For column positioning
-				int w = 0;
-				for(int k = scheme.Count/2; k < scheme.Count; k++)
-				{
-					if(GUI.Button(new Rect(schemeButtonXPos + (schemeButtonWidth * 2),schemeButtonYPos+(schemeButtonHeight*1.2f*w) ,schemeButtonWidth, schemeButtonHeight),scheme[k] ))
-					{
-						selectedScheme = scheme[k];
-						selected = true;
-					}
-					w++;
-				}
-				//Shows Icons
-				if(GUI.Button(new Rect(cardIconXPos,cardIconYPos + (cardIconHeight*1.2f) ,cardIconWidth, cardIconHeight), selectedScheme))
-				{
-					
-				}
-				if(selected)
-				{
-					if(GUI.Button(new Rect(screenWidth*.9f,screenHeight*.9f,screenWidth * .1f,screenHeight * .1f),"Next"))
-					{
-						chooseScheme = false;
-						selected = false;
-                        CreateCards();
-                        CreateChosenDecks();
-                        phase = 1;
-					}
-				}
+			else{
+				currentPlayer = gameData.playerOrder[0];
+				currentPlayerNumber = 0;
 			}
-			#endregion
-			#endregion
-            break;
-            case 1:
-            break;
-            default:
-            break;
+			//Instantiate Hand of new player.
+			InstantiatePhysicalHand();
+
+			// Run start of next turn
+			NextTurn();
 		}
+		//Toggle Hand button.
+		//Show buttons of all cards in their hand
+		if(GUI.Button(new Rect(Screen.width *.8f,Screen.height * .8f,Screen.width *.2f,Screen.height * .1f),"Show Hand"))
+		{
+			showHand = !showHand;
+			RevealHand(showHand);
+			//Get rid of card hand on screen.
+		}
+
+		if(GUI.Button(new Rect(0 ,0 ,Screen.width *.2f,Screen.height * .1f),"Recruit = " + currentRecruit))
+		{
+		}
+		if(GUI.Button(new Rect(0 ,Screen.height * .1f,Screen.width *.2f,Screen.height * .1f),"Attack = " + currentAttack))
+		{
+		}
+		//TODO Clicking on Cards and bringing them to the front ( maybe do this in the HeroScript)
 	}
 
-    void CreateChosenDecks()
-    {
-        VillianDeck     = new Deck();
-        CreateVillianDeck();
-
-        HeroDeck        = new Deck();
-        CreateHeroDeck();
-
-        MastermindDeck  = new Deck();
-        CreateMastermindDeck();
-    }
-
-    void CreateMastermindDeck()
-    {
-        for (int c = 0; c < 4; c++)
-        {
-            
-        }
-    }
-
-    void CreateHeroDeck()
-    {
-        for(int d = 0; d < heroDeckList.Count; d++)
-        {
-			//TODO INSERT HERO CARDS
-        }
-    }
-
-    void CreateVillianDeck()
-    {
-		for (int e = 0; e < selectedVillians.Count; e++)
-        {
-			//TODO INSERT VILLIANS
-        }
-		for ( int f = 0; f < selectedHenchmen.Count; f++)
-		{
-			//TODO INSERT HENCHMEN
-		}
-		for ( int g = 0; g < bystanderListMax; g++)
-		{
-			//TODO INSERT BYSTANDERS
-		}
-		for ( int h = 0; h < 5; h++)
-		{
-			//TODO INSERT MASTER STRIKE
-		}
-		for ( int i = 0; i < 4; i++)
-		{
-			//TODO INSERT SCHEME TWISTS
-		}
-
-    }
-	void CreateCards()
+	public void RemoveCard(GameObject toRemove)
 	{
-        WoundsDeck = new Deck(); 
-            for(int a = 0; a < 30; a++)
-            {
-                WoundsDeck.AddCardToDeck(new Wound((Texture2D)Resources.Load("Textures/wound_30_md")));
-		}
-        BystanderDeck = new Deck();
-            for (int b = 0; b < 30; b++)
-            {
-                BystanderDeck.AddCardToDeck(new Bystander((Texture2D)Resources.Load("Textures/bystander_30_md")));
-            }
-        SHIELDDeck = new Deck();
-            for (int c = 0; c < 30; c++)
-            {
-                SHIELDDeck.AddCardToDeck(new MariaHill((Texture2D)Resources.Load("Textures/shield_officer_maria_hill_30_md")));
-            }
-        Escaped     = new Deck(); 
-        KO          = new Deck(); 
+		currentPhysicalHand.Remove(toRemove);
+		Destroy(toRemove);
 	}
 
-	void addHeroToSelectedList(string chosenHero)
+	void RevealHand (bool reveal)
 	{
-		if(!heroDeckList.Contains(chosenHero))
+		if(reveal)
 		{
-			heroDeckList[heroListPointer] = chosenHero; 
-			heroListPointer++;
-			if(heroListPointer == heroListMax)
+			for(int y = 0; y < currentPhysicalHand.Count; y++)
 			{
-				heroListPointer = 0;
-				selected = true;
+				currentPhysicalHand[y].SetActive(true);
+			}
+			//Move Hand On screen. or make visible.
+		}
+		else{
+			for(int y = 0; y < currentPhysicalHand.Count; y++)
+			{
+				currentPhysicalHand[y].SetActive(false);
 			}
 		}
-
 	}
-
-	void addHenchmenToSelectedList(string chosenHenchman)
-	{
-		if(!selectedHenchmen.Contains(chosenHenchman))
-		{
-			selectedHenchmen[henchmanListPointer] = chosenHenchman; 
-			henchmanListPointer++;
-			if(henchmanListPointer == henchmanListMax)
-			{
-				henchmanListPointer = 0;
-				selected = true;
-			}
-		}
-		
-	}
-
-	void addVillianToSelectedList(string chosenVillian)
-	{
-		if(!selectedVillians.Contains(chosenVillian))
-		{
-			selectedVillians[villainListPointer] = chosenVillian; 
-			villainListPointer++;
-			if(villainListPointer == villainListMax)
-			{
-				villainListPointer = 0;
-				selected = true;
-			}
-		}
-		
-	}
-
 }
 	
